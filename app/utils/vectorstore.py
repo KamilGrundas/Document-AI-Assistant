@@ -26,7 +26,7 @@ async def load_vectorestore(foldername: str) -> Chroma:
 
 async def list_vectorstores() -> Dict[str, List[str]]:
     if not os.path.exists(VECTORESTORE_FOLDER):
-        raise HTTPException(status_code=404, detail="Vectorstore folder not found.")
+        os.makedirs(VECTORESTORE_FOLDER)
     try:
         vectorstores = os.listdir(VECTORESTORE_FOLDER)
         vectorstores = [

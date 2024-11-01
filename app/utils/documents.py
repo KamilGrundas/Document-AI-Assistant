@@ -37,8 +37,7 @@ async def save_pdf_file(file: File) -> Dict[str, str]:
 
 async def list_files() -> Dict[str, List[str]]:
     if not os.path.exists(DOCS_FOLDER):
-        raise HTTPException(status_code=404, detail="Document folder not found.")
-
+        os.makedirs(DOCS_FOLDER)
     try:
         documents = os.listdir(DOCS_FOLDER)
         documents = [

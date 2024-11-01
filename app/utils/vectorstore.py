@@ -24,7 +24,7 @@ async def load_vectorestore(foldername: str) -> Chroma:
     return vectorstore
 
 
-async def list_vectorstores() -> Dict[str, List[Chroma]]:
+async def list_vectorstores() -> Dict[str, List[str]]:
     if not os.path.exists(VECTORESTORE_FOLDER):
         raise HTTPException(status_code=404, detail="Vectorstore folder not found.")
     try:
@@ -39,12 +39,12 @@ async def list_vectorstores() -> Dict[str, List[Chroma]]:
             status_code=500, detail=f"An error occurred while listing folders: {str(e)}"
         )
 
-    return {"vectorstores": vectorstores}
+    return vectorstores
 
 
-async def create_retriever(vectorstore: Chroma, k: int = 3) -> VectorStoreRetriever:
+def create_retriever(vectorstore: Chroma, k: int = 3) -> VectorStoreRetriever:
     return vectorstore.as_retriever(search_kwargs={"k": k})
 
 
-async def combine_retrievers(retrievers: List[Chroma]) -> EnsembleRetriever:
+def combine_retrievers(retrievers: List[Chroma]) -> EnsembleRetriever:
     return EnsembleRetriever(retrievers=retrievers)

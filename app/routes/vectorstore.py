@@ -17,4 +17,4 @@ async def save_vectorstore_endpoint(filename: str) -> Dict[str, str]:
 
 @router.get("/list_vectorstores/", response_model=VectorstoresResponse)
 async def get_vectorstores() -> Dict[str, List[str]]:
-    return await list_vectorstores()
+    return {"vectorstores": await list_vectorstores()}

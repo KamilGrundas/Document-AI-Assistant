@@ -16,3 +16,7 @@ class VectorstoresResponse(BaseModel):
 
 class QueryRequest(BaseModel):
     question: str
+
+
+class UpdateQAChainRequest(BaseModel):
+    vectorstores: List[str]

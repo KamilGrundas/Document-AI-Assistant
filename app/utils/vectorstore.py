@@ -14,7 +14,12 @@ VECTORESTORE_FOLDER = "data/vectorstores"
 async def save_vectorstore(filename: str) -> None:
     document = await load_document(filename)
     document = await split_document(document)
-    path = os.path.join(VECTORESTORE_FOLDER, os.path.splitext(filename)[0])
+    vectorstore_name = os.path.splitext(filename)[0]
+    for doc in document:
+        if doc.metadata is None:
+            doc.metadata = {}
+        doc.metadata["source_file"] = vectorstore_name
+    path = os.path.join(VECTORESTORE_FOLDER, vectorstore_name)
     Chroma.from_documents(document, EMBEDDINGS, persist_directory=path)
 
 

@@ -13,4 +13,4 @@ async def upload_document(file: UploadFile = File(...)) -> Dict[str, str]:
 
 @router.get("/list_documents/", response_model=DocumentsResponse)
 async def get_documents() -> Dict[str, List[str]]:
-    return await list_files()
+    return {"documents": await list_files()}

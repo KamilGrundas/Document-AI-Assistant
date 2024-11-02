@@ -13,20 +13,30 @@ async def startup_event():
     assistant = await DocQueryAssistant.create()
 
 
-@router.post("/query/")
-async def get_answer(request: QueryRequest):
+# @router.post("/query_single/")
+# async def get_answer(request: QueryRequest):
+#     question = request.question
+#     try:
+#         answer = await assistant.get_answer(question)
+#         return answer
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/query_split/")
+async def get_splitted_answer(request: QueryRequest):
     question = request.question
     try:
-        answer = await assistant.get_answer(question)
-        return {"question": request.question, "answer": answer}
+        answer = await assistant.get_splitted_answer(question)
+        return answer
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/update_qa_chain/")
-async def update_qa_chain_endpoint(request: UpdateQAChainRequest):
+@router.post("/update_retriever/")
+async def update_retriever_endpoint(request: UpdateQAChainRequest):
     try:
-        await assistant.update_qa_chain(request.vectorstores)
-        return {"status": "success", "message": "QA chain updated successfully."}
+        await assistant.update_retriever(request.vectorstores)
+        return {"status": "success", "message": "Retriever updated successfully."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

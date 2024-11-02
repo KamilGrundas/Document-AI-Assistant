@@ -35,7 +35,7 @@ async def save_pdf_file(file: File) -> Dict[str, str]:
     return {"filename": os.path.basename(file_location)}
 
 
-async def list_files() -> Dict[str, List[str]]:
+async def list_files() -> List[str]:
     if not os.path.exists(DOCS_FOLDER):
         os.makedirs(DOCS_FOLDER)
     try:
@@ -50,7 +50,7 @@ async def list_files() -> Dict[str, List[str]]:
             status_code=500, detail=f"An error occurred while listing files: {str(e)}"
         )
 
-    return {"documents": documents}
+    return documents
 
 
 async def load_document(filename: str) -> List[Document]:

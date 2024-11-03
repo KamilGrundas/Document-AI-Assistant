@@ -13,14 +13,14 @@ async def startup_event():
     assistant = await DocQueryAssistant.create()
 
 
-# @router.post("/query_single/")
-# async def get_answer(request: QueryRequest):
-#     question = request.question
-#     try:
-#         answer = await assistant.get_answer(question)
-#         return answer
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
+@router.post("/query_single/")
+async def get_answer(request: QueryRequest):
+    question = request.question
+    try:
+        answer = await assistant.get_answer(question)
+        return answer
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/query_split/")

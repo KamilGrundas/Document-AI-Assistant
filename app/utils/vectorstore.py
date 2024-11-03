@@ -7,7 +7,7 @@ from langchain.retrievers import EnsembleRetriever
 from langchain_chroma import Chroma
 from typing import Dict, List
 
-EMBEDDINGS = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+EMBEDDINGS = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 VECTORESTORE_FOLDER = "data/vectorstores"
 
 
@@ -15,10 +15,6 @@ async def save_vectorstore(filename: str) -> None:
     document = await load_document(filename)
     document = await split_document(document)
     vectorstore_name = os.path.splitext(filename)[0]
-    for doc in document:
-        if doc.metadata is None:
-            doc.metadata = {}
-        doc.metadata["source_file"] = vectorstore_name
     path = os.path.join(VECTORESTORE_FOLDER, vectorstore_name)
     Chroma.from_documents(document, EMBEDDINGS, persist_directory=path)
 
@@ -47,7 +43,7 @@ async def list_vectorstores() -> Dict[str, List[str]]:
     return vectorstores
 
 
-def create_retriever(vectorstore: Chroma, k: int = 3) -> VectorStoreRetriever:
+def create_retriever(vectorstore: Chroma, k: int = 2) -> VectorStoreRetriever:
     return vectorstore.as_retriever(search_kwargs={"k": k})
 
 

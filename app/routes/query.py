@@ -35,8 +35,10 @@ async def get_splitted_answer(request: QueryRequest):
 
 @router.post("/update_retriever/")
 async def update_retriever_endpoint(request: UpdateQAChainRequest):
-    try:
-        await assistant.update_retriever(request.vectorstores)
-        return {"status": "success", "message": "Retriever updated successfully."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    retrievers = await assistant.update_retriever(request.vectorstores)
+    loaded_retrievrs = [retriever.metadata.get("source") for retriever in retrievers]
+
+
+    return {"status": "success", "current_retrievers": loaded_retrievrs}
+

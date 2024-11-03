@@ -21,7 +21,7 @@ Answer:
 """
 
 PROMPT = PromptTemplate(
-    template=TEMPLATE, input_variables=["context", "question", "name"]
+    template=TEMPLATE, input_variables=["context", "question"]
 )
 
 
@@ -41,10 +41,11 @@ class DocQueryAssistant:
     @staticmethod
     async def load_retriever(vectorstores: List[str]):
         retrievers = [
-            create_retriever(await load_vectorestore(foldername))
-            for foldername in vectorstores
+            create_retriever(await load_vectorestore(foldername), foldername)
+            for foldername in vectorstores if foldername in await list_vectorstores()
         ]
-        return combine_retrievers(retrievers)
+        retriever = combine_retrievers(retrievers) if retrievers else None
+        return retriever
 
     def create_qa_chain(self):
         qa_chain = (
@@ -62,10 +63,11 @@ class DocQueryAssistant:
 
     async def update_retriever(self, vectorstores: List[str]):
         self.retriever = await self.load_retriever(vectorstores)
-        if self.qa_chain:
+        if self.qa_chain and self.retriever:
             self.qa_chain.retriever = self.retriever
         else:
             self.qa_chain = self.create_qa_chain()
+        return self.retriever.retrievers if self.retriever else []
 
     def create_prompts(self, question: str, documents: List) -> Tuple[Dict, Dict]:
         documents_by_source = defaultdict(list)

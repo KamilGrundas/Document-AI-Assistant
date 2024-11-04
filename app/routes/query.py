@@ -33,8 +33,17 @@ async def get_splitted_answer(request: QueryRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/check_availabe_models/")
-async def check_availabe_models():
+@router.get("/get_current_model/")
+async def get_current_model():
+    try:
+        current_model = assistant.llm.model
+        return {"current_model": current_model}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/check_available_models/")
+async def check_available_models():
     try:
         models = assistant.check_available_models()
         return {"models": models}

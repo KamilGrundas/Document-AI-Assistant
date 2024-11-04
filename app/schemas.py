@@ -18,5 +18,9 @@ class QueryRequest(BaseModel):
     question: str
 
 
-class UpdateQAChainRequest(BaseModel):
+class UpdateRetrieverRequest(BaseModel):
     vectorstores: List[str]
+
+
+class UpdateModelRequest(BaseModel):
+    model_name: str

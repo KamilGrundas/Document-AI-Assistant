@@ -43,9 +43,13 @@ async def list_vectorstores() -> Dict[str, List[str]]:
     return vectorstores
 
 
-def create_retriever(vectorstore: Chroma, name: str = "Unknown", k: int = 3,) -> VectorStoreRetriever:
+def create_retriever(
+    vectorstore: Chroma,
+    name: str = "Unknown",
+    k: int = 3,
+) -> VectorStoreRetriever:
     retriever = vectorstore.as_retriever(search_kwargs={"k": k})
-    retriever.metadata = {"source":name}
+    retriever.metadata = {"source": name}
     return retriever
 
 

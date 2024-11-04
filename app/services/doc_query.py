@@ -69,7 +69,25 @@ class DocQueryAssistant:
             self.qa_chain.retriever = self.retriever
         else:
             self.qa_chain = self.create_qa_chain()
-        return self.retriever.retrievers if self.retriever else []
+
+        loaded_retrievrs = (
+            [
+                retriever.metadata.get("source")
+                for retriever in self.retriever.retrievers
+            ]
+            if self.retriever
+            else []
+        )
+        return loaded_retrievrs
+
+    def update_llm(self, llm_name: str) -> str:
+        if llm_name not in self.check_available_models():
+            raise Exception(f"Model {llm_name} is not availabe.")
+
+        self.llm = OllamaLLM(model=llm_name)
+        self.qa_chain = self.create_qa_chain()
+
+        return llm_name
 
     @staticmethod
     def check_available_models() -> List[str]:

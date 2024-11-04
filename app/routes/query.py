@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.schemas import QueryRequest, UpdateQAChainRequest
+from app.schemas import QueryRequest, UpdateRetrieverRequest, UpdateModelRequest
 from app.services.doc_query import DocQueryAssistant
 
 router = APIRouter(prefix="/query", tags=["query"])
@@ -43,9 +43,17 @@ async def check_availabe_models():
 
 
 @router.post("/update_retriever/")
-async def update_retriever_endpoint(request: UpdateQAChainRequest):
-
+async def update_retriever_endpoint(request: UpdateRetrieverRequest):
     retrievers = await assistant.update_retriever(request.vectorstores)
-    loaded_retrievrs = [retriever.metadata.get("source") for retriever in retrievers]
 
-    return {"status": "success", "current_retrievers": loaded_retrievrs}
+    return {"status": "success", "current_retrievers": retrievers}
+
+
+@router.post("/update_llm/")
+async def update_model(request: UpdateModelRequest):
+    try:
+        model_name = assistant.update_llm(request.model_name)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return {"status": "success", "current_model": model_name}

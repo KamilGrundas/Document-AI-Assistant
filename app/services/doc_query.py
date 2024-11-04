@@ -1,4 +1,5 @@
 from langchain_ollama import OllamaLLM
+import ollama
 from langchain.prompts import PromptTemplate
 from langchain.chains.retrieval_qa.base import RetrievalQA
 from app.utils.vectorstore import (
@@ -11,7 +12,7 @@ from typing import List, Tuple, Dict
 from collections import defaultdict
 
 TEMPLATE = """
-Answer the following question based on the provided context. If you don't know the answer, reply with "I don't know."
+Answer the following question based on the provided context. If the content does not provide an answer, you may write "I don't know".
 
 {context}
 
@@ -20,29 +21,30 @@ Question: {question}
 Answer:
 """
 
-PROMPT = PromptTemplate(
-    template=TEMPLATE, input_variables=["context", "question"]
-)
+PROMPT = PromptTemplate(template=TEMPLATE, input_variables=["context", "question"])
 
 
 class DocQueryAssistant:
-    def __init__(self, llm, retriever):
+    def __init__(self, llms, llm, retriever):
+        self.llms = llms
         self.llm = llm
         self.retriever = retriever
         self.qa_chain = self.create_qa_chain()
 
     @classmethod
     async def create(cls):
-        llm = OllamaLLM(model="llama3.2")
+        llms = cls.check_available_models()
+        llm = OllamaLLM(model=llms[0]) if llms else None
         vectorstores = await list_vectorstores()
         retriever = await cls.load_retriever(vectorstores) if vectorstores else None
-        return cls(llm, retriever)
+        return cls(llms, llm, retriever)
 
     @staticmethod
     async def load_retriever(vectorstores: List[str]):
         retrievers = [
             create_retriever(await load_vectorestore(foldername), foldername)
-            for foldername in vectorstores if foldername in await list_vectorstores()
+            for foldername in vectorstores
+            if foldername in await list_vectorstores()
         ]
         retriever = combine_retrievers(retrievers) if retrievers else None
         return retriever
@@ -56,7 +58,7 @@ class DocQueryAssistant:
                 return_source_documents=True,
                 chain_type_kwargs={"prompt": PROMPT},
             )
-            if self.retriever
+            if self.retriever and self.llms
             else None
         )
         return qa_chain
@@ -68,6 +70,19 @@ class DocQueryAssistant:
         else:
             self.qa_chain = self.create_qa_chain()
         return self.retriever.retrievers if self.retriever else []
+
+    @staticmethod
+    def check_available_models() -> List[str]:
+        try:
+            available_models_data = ollama.list()
+            available_models = [
+                model_info["name"]
+                for model_info in available_models_data.get("models", [])
+            ]
+            return available_models
+        except Exception as e:
+            print(f"Error retrieving available models: {e}")
+            return []
 
     def create_prompts(self, question: str, documents: List) -> Tuple[Dict, Dict]:
         documents_by_source = defaultdict(list)
@@ -94,6 +109,8 @@ class DocQueryAssistant:
     async def get_splitted_answer(self, question: str) -> Dict:
         if not self.retriever:
             raise Exception("Retriever has not been initialized.")
+        elif not self.llms:
+            raise Exception("LLM has not been initialized.")
 
         documents = self.retriever.invoke(question)
         prompts, documents_by_source = self.create_prompts(question, documents)

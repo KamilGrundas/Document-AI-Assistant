@@ -51,6 +51,15 @@ async def check_available_models():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/get_current_retrievers/")
+async def get_current_retrievers():
+    try:
+        retrievers = assistant.get_current_retrievers()
+        return {"retrievers": retrievers}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/update_retriever/")
 async def update_retriever_endpoint(request: UpdateRetrieverRequest):
     retrievers = await assistant.update_retriever(request.vectorstores)
@@ -61,7 +70,7 @@ async def update_retriever_endpoint(request: UpdateRetrieverRequest):
 @router.post("/update_llm/")
 async def update_model(request: UpdateModelRequest):
     try:
-        model_name = assistant.update_llm(request.model_name)
+        model_name = assistant.update_llm(request.llm_name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

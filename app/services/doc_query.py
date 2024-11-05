@@ -63,13 +63,7 @@ class DocQueryAssistant:
         )
         return qa_chain
 
-    async def update_retriever(self, vectorstores: List[str]):
-        self.retriever = await self.load_retriever(vectorstores)
-        if self.qa_chain and self.retriever:
-            self.qa_chain.retriever = self.retriever
-        else:
-            self.qa_chain = self.create_qa_chain()
-
+    def get_current_retrievers(self) -> List[str]:
         loaded_retrievrs = (
             [
                 retriever.metadata.get("source")
@@ -78,6 +72,16 @@ class DocQueryAssistant:
             if self.retriever
             else []
         )
+        return loaded_retrievrs
+
+    async def update_retriever(self, vectorstores: List[str]):
+        self.retriever = await self.load_retriever(vectorstores)
+        if self.qa_chain and self.retriever:
+            self.qa_chain.retriever = self.retriever
+        else:
+            self.qa_chain = self.create_qa_chain()
+
+        loaded_retrievrs = self.get_current_retrievers()
         return loaded_retrievrs
 
     def update_llm(self, llm_name: str) -> str:
@@ -144,6 +148,6 @@ class DocQueryAssistant:
         )
 
         return {
-            "answer": formatted_answer,
+            "result": formatted_answer,
             "source_files": list(documents_by_source.keys()),
         }

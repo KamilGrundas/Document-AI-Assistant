@@ -23,4 +23,4 @@ class UpdateRetrieverRequest(BaseModel):
 
 
 class UpdateModelRequest(BaseModel):
-    model_name: str
+    llm_name: str

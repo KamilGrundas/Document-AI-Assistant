@@ -4,7 +4,7 @@ from app.routes import documents, vectorstore, query, views
 
 app = FastAPI()
 
-# app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/app/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(views.router)
 app.include_router(vectorstore.router)

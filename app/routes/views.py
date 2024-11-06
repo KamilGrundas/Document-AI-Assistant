@@ -7,9 +7,9 @@ router = APIRouter(tags=["views"])
 templates = Jinja2Templates(directory="app/templates")
 
 
-# @router.get("/favicon.ico")
-# async def favicon():
-#     return FileResponse("static/images/favicon.ico")
+@router.get("/favicon.ico")
+async def favicon():
+    return FileResponse("app/static/images/favicon.ico")
 
 
 @router.get("/", response_class=HTMLResponse)

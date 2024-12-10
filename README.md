@@ -55,6 +55,11 @@ The **Document AI Assistant** is a FastAPI application that enables users to int
 
    ![Document Selection Screenshot](app/static/images/document_selection.png)
 
+### 4. **Chat**
+   Ask model about selected documents.
+
+   ![Document Selection Screenshot](app/static/images/chat.png)
+
 ---
 
 ## Additional Notes

@@ -98,7 +98,7 @@ class DocQueryAssistant:
         try:
             available_models_data = ollama.list()
             available_models = [
-                model_info["name"]
+                model_info["model"]
                 for model_info in available_models_data.get("models", [])
             ]
             return available_models

@@ -14,7 +14,6 @@ charset-normalizer==3.4.0
 chroma-hnswlib==0.7.6
 chromadb==0.5.23
 click==8.1.7
-colorama==0.4.6
 coloredlogs==15.0.1
 dataclasses-json==0.6.7
 Deprecated==1.2.15
@@ -91,7 +90,6 @@ Pygments==2.18.0
 pypdf==5.1.0
 PyPika==0.48.9
 pyproject_hooks==1.2.0
-pyreadline3==3.5.4
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-multipart==0.0.19
@@ -115,16 +113,16 @@ starlette==0.41.3
 sympy==1.13.1
 tenacity==9.0.0
 threadpoolctl==3.5.0
-tokenizers==0.21.0
+tokenizers>=0.13.2,<0.21.0
 torch==2.5.1
 tqdm==4.67.1
-transformers==4.47.0
+transformers==4.41.2
 typer==0.15.1
 typing-inspect==0.9.0
 typing_extensions==4.12.2
 urllib3==2.2.3
 uvicorn==0.32.1
-watchfiles==1.0.0
+watchfiles==1.0.1
 websocket-client==1.8.0
 websockets==14.1
 wrapt==1.17.0
